@@ -1,0 +1,81 @@
+version: 3
+
+dotenv: ['.env']
+
+env:
+  GOOSE_DRIVER: sqlite3
+  GOOSE_DBSTRING: "{{.DATABASE_URL}}"
+  GOOSE_MIGRATION_DIR: ./migrations
+  GOOSE_TABLE: db_migrations
+
+tasks:
+  default:
+    desc: Run the main task
+    deps:
+      - kill-port
+      - gen
+    cmds:
+      - task: run
+
+  run:
+    desc: Run the application
+    cmds:
+      - echo "Running the application..."
+      - wails dev
+  
+  deps:
+    desc: Install dependencies
+    cmds:
+      - echo "Installing dependencies..."
+      - go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+      - go install github.com/pressly/goose/v3/cmd/goose@latest
+
+  gen:
+    desc: Generate code using sqlc
+    cmds:
+      - echo "Generating code with sqlc..."
+      - sqlc generate
+
+  migrations-up:
+    desc: Run database migrations
+    cmds:
+      - echo "Running database migrations..."
+      - goose up
+
+  migrations-down:
+    desc: Rollback database migrations
+    cmds:
+      - echo "Rolling back database migrations..."
+      - goose down
+
+  migrations-status:
+    desc: Show the status of database migrations
+    cmds:
+      - echo "Checking migration status..."
+      - goose status
+
+  migrations-redo:
+    desc: Redo the last migration
+    cmds:
+      - echo "Redoing the last migration..."
+      - goose redo
+
+  migrations-reset:
+    desc: Rollback all migrations
+    cmds:
+      - echo "Reseting all migrations"
+      - goose reset
+
+  migrations-create:
+    desc: Create a new migration
+    silent: true
+    cmds:
+      - |
+        echo -n "Type the name of the migration (e.g: add_users_table): "
+        read MIGRATION_NAME
+        if [ -z "$MIGRATION_NAME" ]; then
+          echo "Erro: Migration name cannot be empty."
+          exit 1
+        fi
+        echo "Creating migration '$MIGRATION_NAME' ..."
+        goose create "$MIGRATION_NAME" sql
