@@ -1,13 +1,9 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "dindin",
-  "outputfilename": "dindin",
-  "frontend:install": "npm install",
-  "frontend:build": "npm run build",
-  "frontend:dev:watcher": "npm run dev",
-  "frontend:dev:serverUrl": "auto",
-  "author": {
-    "name": "Psykka",
-    "email": "36780964+Psykka@users.noreply.github.com"
-  }
+  "name": "steel",
+  "outputfilename": "steel",
+  "frontend:install": "pnpm install",
+  "frontend:build": "pnpm run build",
+  "frontend:dev:watcher": "pnpm run dev",
+  "frontend:dev:serverUrl": "auto"
 }
